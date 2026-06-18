@@ -1,68 +1,98 @@
-# Overview
-This project focuses on the end-to-end process of data preprocessing and modeling to build robust and accurate models. Below is a comprehensive guide to the steps involved, from data extraction to deployment.
+# AI Tools & ML — Applied NLP Notebooks
 
-# Preprocessing
+> A practical collection of Jupyter notebooks for text extraction, entity recognition, and fuzzy string matching — built around real document-processing tasks (receipts, tax declarations, PDFs).
 
-## Data Extraction
-Data extraction involves gathering raw data from various sources. This step includes:
-1. **Source Identification**: Determine where the data will come from (e.g., databases, APIs, web scraping).
-2. **Data Collection**: Implement methods to extract data (e.g., SQL queries, API calls, scraping scripts).
-3. **Data Integration**: Combine data from different sources into a unified format.
+![Jupyter](https://img.shields.io/badge/Jupyter-F37626?style=for-the-badge&logo=jupyter&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![spaCy](https://img.shields.io/badge/spaCy-09A3D5?style=for-the-badge&logo=spacy&logoColor=white)
+![pandas](https://img.shields.io/badge/pandas-150458?style=for-the-badge&logo=pandas&logoColor=white)
+![NumPy](https://img.shields.io/badge/NumPy-013243?style=for-the-badge&logo=numpy&logoColor=white)
+![OpenCV](https://img.shields.io/badge/OpenCV-5C3EE8?style=for-the-badge&logo=opencv&logoColor=white)
 
-## Preprocessing
-Preprocessing prepares raw data for analysis and modeling. This includes several key tasks:
+## Overview
 
-### Data Cleaning
-Data cleaning ensures the data is accurate, complete, and ready for analysis. This step includes:
-1. **Handling Missing Values**: Fill in or remove missing data.
-2. **Removing Duplicates**: Identify and eliminate duplicate records.
-3. **Correcting Errors**: Fix inaccuracies and inconsistencies in the data.
-4. **Normalization**: Standardize data formats and scales.
+This repository is a hands-on toolkit of standalone notebooks for applied Natural Language Processing and data extraction. Each notebook tackles one concrete problem encountered when turning unstructured documents into clean, structured data:
 
-### NLP/NLU Processing
-Natural Language Processing (NLP) and Natural Language Understanding (NLU) are essential for text data. This involves:
-1. **Tokenization**: Break down text into tokens (words, phrases).
-2. **Stop-word Removal**: Remove common words that do not contribute to meaning.
-3. **Stemming/Lemmatization**: Reduce words to their root forms.
-4. **Named Entity Recognition**: Identify entities (names, dates) in text.
-5. **Sentiment Analysis**: Determine the sentiment expressed in text.
+- **Reading PDFs** — pulling text out of scanned and native PDFs via OCR and direct parsing.
+- **Extracting tables** — turning PDF tables into Pandas DataFrames.
+- **Named-entity & field extraction** — combining spaCy NER, regex, and dependency parsing to capture specific fields from receipts and tax documents.
+- **Fuzzy matching** — reconciling noisy input strings (addresses, cities) against a reference dataset.
 
-### Increase Accuracy by Enhancing Rule-Based Logic
-Enhance the model’s accuracy by:
-1. **Defining Rules**: Create specific rules based on domain knowledge.
-2. **Refining Rules**: Continuously improve rules based on model performance and feedback.
-3. **Integrating Rules with ML Models**: Combine rule-based logic with machine learning approaches for better accuracy.
+These are practical, self-contained notebooks — not a packaged framework or library. Treat them as recipes you can read, adapt, and run cell by cell.
 
-## Modeling
-Modeling involves building and training machine learning models. This includes:
-1. **Feature Engineering**: Create new features or modify existing ones to improve model performance.
-2. **Model Selection**: Choose appropriate algorithms (e.g., regression, classification, clustering).
-3. **Training**: Train the model using training data.
-4. **Hyperparameter Tuning**: Optimize model parameters to enhance performance.
+## Notebooks
 
-## Packaging
-Packaging ensures that the model and its dependencies are organized and easily deployable. This includes:
-1. **Creating Artifacts**: Generate model files, configuration files, and documentation.
-2. **Dependency Management**: Ensure all required libraries and tools are included.
-3. **Containerization**: Package the application in containers (e.g., Docker) for consistent deployment.
+| Notebook | What it does |
+|----------|--------------|
+| [`PDF-READER.ipynb`](PDF-READER.ipynb) | Extracts text from PDFs using three different approaches and compares them: Tesseract OCR (`pytesseract` + `pdf2image`), `EasyOCR`, and direct text/image/metadata extraction with PyMuPDF (`fitz`). Supports multi-language OCR (e.g. `eng+fra`). |
+| [`NLP-PROCESSING.ipynb`](NLP-PROCESSING.ipynb) | Field extraction from receipt / tax text. Runs spaCy NER (`en_core_web_sm`), then layers regex patterns and dependency parsing to capture specific fields (receipt number, bill number, TIN, dates, amounts, address, operation). Collects everything into a Pandas DataFrame and writes it to CSV. |
+| [`fuzzywuzy-string-matching-TF.ipynb`](fuzzywuzy-string-matching-TF.ipynb) | Fuzzy string matching for record reconciliation. Uses `fuzzywuzzy` (`fuzz.ratio`) together with a spaCy French model (`fr_core_news_md`) to match noisy postal addresses and city names against a reference spreadsheet, with an optional web-search spelling-correction step. |
+| [`tableToDataFrame/extract_from_declaration.ipynb`](tableToDataFrame/extract_from_declaration.ipynb) | Walks through extracting tables from a multi-page declaration PDF with `pdfplumber`, rendering each page to an image for inspection and converting extracted tables into Pandas DataFrames. |
+| [`tableToDataFrame/generalizeTheCode.ipynb`](tableToDataFrame/generalizeTheCode.ipynb) | The reusable version of the table-extraction logic. Wraps the workflow into helper functions (`open_pdf`, `extract_tables_from_page`, `process_tables`) that handle single- and multiple-table pages and return a list of DataFrames. |
+| [`word-matching.ipynb`](word-matching.ipynb) | Placeholder / scratch notebook (currently empty). |
 
-## Testing
-Testing verifies that the model and its associated components function as expected. This involves:
-1. **Unit Testing**: Test individual components for correct functionality.
-2. **Integration Testing**: Ensure components work together seamlessly.
-3. **Performance Testing**: Evaluate model performance on various metrics (e.g., accuracy, precision, recall).
-4. **Validation**: Confirm that the model meets business requirements and performs well on unseen data.
+## Tech Stack
 
-## Deployment
-Deployment makes the model available for use in a production environment. This step includes:
-1. **Deployment Strategy**: Determine the deployment approach (e.g., cloud services, on-premises).
-2. **Monitoring**: Implement monitoring to track model performance and detect issues.
-3. **Maintenance**: Regularly update and maintain the model and its dependencies.
+Libraries actually imported across the notebooks:
 
-# Data Modeling
+- **NLP** — [spaCy](https://spacy.io/) (`en_core_web_sm`, `fr_core_news_md` models), Python `re` (regex)
+- **Fuzzy matching** — [fuzzywuzzy](https://github.com/seatgeek/fuzzywuzzy)
+- **PDF & OCR** — [PyMuPDF (`fitz`)](https://pymupdf.readthedocs.io/), [pdfplumber](https://github.com/jsvine/pdfplumber), [pdf2image](https://github.com/Belval/pdf2image), [pytesseract](https://github.com/madmaze/pytesseract), [EasyOCR](https://github.com/JaidedAI/EasyOCR)
+- **Imaging** — [OpenCV (`cv2`)](https://opencv.org/), [Pillow (`PIL`)](https://python-pillow.org/), [Matplotlib](https://matplotlib.org/), [NumPy](https://numpy.org/)
+- **Data** — [pandas](https://pandas.pydata.org/), `openpyxl` (Excel I/O via `pd.read_excel`)
+- **Web** — `requests`, `serpapi` (optional spelling-correction lookup)
 
-Data modeling involves designing the structure of the data and how it will be used by the models. This includes:
-1. **Schema Design**: Define how data is organized and related.
-2. **Data Storage**: Choose appropriate storage solutions (e.g., databases, data lakes).
-3. **Data Access**: Implement methods for accessing and querying data.
+## Getting Started
 
+### 1. Clone and create an environment
+
+```bash
+git clone https://github.com/MohamedKhattat/AI-tools-ml.git
+cd AI-tools-ml
+python -m venv .venv
+# Windows:  .venv\Scripts\activate
+# macOS/Linux:  source .venv/bin/activate
+```
+
+### 2. Install the Python libraries
+
+```bash
+pip install jupyter pandas numpy openpyxl requests \
+            spacy fuzzywuzzy python-Levenshtein \
+            pdfplumber pymupdf pdf2image pytesseract easyocr \
+            opencv-python pillow matplotlib
+```
+
+Download the spaCy language models used by the notebooks:
+
+```bash
+python -m spacy download en_core_web_sm
+python -m spacy download fr_core_news_md
+```
+
+### 3. Install system OCR dependencies
+
+Some notebooks rely on external binaries:
+
+- **Tesseract OCR** — required by `pytesseract` (`PDF-READER.ipynb`).
+- **Poppler** — required by `pdf2image` for converting PDF pages to images.
+
+Install these via your OS package manager (e.g. `apt`, `brew`, or the official Windows builds) before running the OCR cells.
+
+### 4. Launch Jupyter
+
+```bash
+jupyter notebook
+```
+
+Open any notebook and run the cells top to bottom. Update the local file paths (PDFs, Excel files) at the top of each notebook to point at your own inputs.
+
+## Notes
+
+- **Self-contained & exploratory.** Each notebook is independent and meant to be read and run interactively. There is no shared package, CLI, or installable module.
+- **Bring your own inputs.** The notebooks reference local file paths (PDFs, spreadsheets) that are not committed to the repo. Point them at your own documents.
+- **Provide your own API keys.** Any third-party service (e.g. the SerpAPI spelling-correction lookup) requires your own credentials — supply them via an environment variable or your own configuration, and never commit keys to the repo.
+- **Domain focus.** The example documents are fiscal / administrative (receipts, tax declarations), reflecting an applied focus on document understanding in fiscal-tech contexts.
+
+---
+<p align="center">Built by <b>Mohamed Habib Khattat</b> — <a href="https://github.com/MohamedKhattat">GitHub</a> · <a href="https://www.linkedin.com/in/mohamed-habib-khattat-2b206a173">LinkedIn</a></p>
